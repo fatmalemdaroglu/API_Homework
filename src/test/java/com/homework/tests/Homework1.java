@@ -1,7 +1,7 @@
-package com.iunames.tests;
+package com.homework.tests;
 
-import com.iunames.utilities.ApiUtilities;
-import com.iunames.utilities.ConfigurationReader;
+import com.homework.utilities.ApiUtilities;
+import com.homework.utilities.ConfigurationReader;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
