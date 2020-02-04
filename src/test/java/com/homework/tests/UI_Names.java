@@ -15,7 +15,7 @@ public class UI_Names {
 
     @BeforeAll
     public static void setup() {
-        baseURI = ConfigurationReader.getProperty("baseURI");
+        baseURI = ConfigurationReader.getProperty("uinames_api_uri");
     }
 
     @Test
