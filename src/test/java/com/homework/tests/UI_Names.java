@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
-public class Homework1 {
+public class UI_Names {
 
     @BeforeAll
     public static void setup() {
