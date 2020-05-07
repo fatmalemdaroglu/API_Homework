@@ -9,7 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Map;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 import static io.restassured.RestAssured.*;
@@ -35,10 +35,10 @@ public class Github_Api {
         given().accept(ContentType.JSON).
                 when().get("/orgs/Cucumber").prettyPeek().
                 then().assertThat().statusCode(200).
-                contentType("application/json; charset=utf-8").
-                body("login", is("cucumber")).
-                body("name", is("Cucumber")).
-                body("id",is(320565));
+                                    contentType("application/json; charset=utf-8").
+                                    body("login", is("cucumber")).
+                                    body("name", is("Cucumber")).
+                                    body("id",is(320565));
     }
     @Test
     @DisplayName("Verify error message")
@@ -54,8 +54,9 @@ public class Github_Api {
     @DisplayName("Verify Number of repositories")
     public void test3() {
         Response response = given().accept(ContentType.JSON).
-                when().get("/orgs/Cucumber");
+                when().get("/orgs/Cucumber").prettyPeek();
         int NumberOfRepos = response.jsonPath().getInt("public_repos");
+        System.out.println(NumberOfRepos);
 
         Response response1 = given().accept(ContentType.JSON).
                 when().get("/orgs/Cucumber/repos").prettyPeek();
@@ -98,7 +99,8 @@ public class Github_Api {
     @Test
     @DisplayName("Verify Ascending order by full_name sort")
     public void test6() {
-        Response response = given().accept(ContentType.JSON).queryParam("sort", "full_name").
+        Response response = given().accept(ContentType.JSON).
+                queryParam("sort", "full_name").
                 when().get("/orgs/Cucumber/repos").prettyPeek();
 
         List<String> name = response.jsonPath().get("name");
