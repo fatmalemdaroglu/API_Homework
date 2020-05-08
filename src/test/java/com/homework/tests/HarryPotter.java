@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static io.restassured.RestAssured.*;
@@ -71,7 +72,7 @@ public class HarryPotter {
 
         List<String> ids = response.jsonPath().getList("_id");
         assertEquals(195,ids.size());
-        System.out.println(ids.size());
+        System.out.println(ids.get(194));
     }
 
     @Test
@@ -84,6 +85,55 @@ public class HarryPotter {
                 assertThat().body("_id", notNullValue()).
                 assertThat().body("dumbledoresArmy",everyItem(is(oneOf(true,false))) ).
                 assertThat().body("house",everyItem(is(oneOf("Gryffindor", "Ravenclaw", "Slytherin", "Hufflepuff"))));
+    }
+    @Test
+    @DisplayName("Verify all character information")
+    public void test6() {
+        Response response1 = given().accept(ContentType.JSON).
+                queryParams("key",ConfigurationReader.getProperty("apiKey")).
+                when().get("/characters").prettyPeek();
+        response1.then().assertThat().statusCode(200).
+                        assertThat().contentType("application/json; charset=utf-8");
+
+        Map<String,?> character = response1.jsonPath().getMap("[194]");
+        System.out.println(character);
+
+
+        Response response2 = given().accept(ContentType.JSON).
+                queryParams("key",ConfigurationReader.getProperty("apiKey")).
+                queryParams("name",character.get("name")).
+                when().get("/characters");
+        response2.then().assertThat().statusCode(200).
+               assertThat().contentType("application/json; charset=utf-8").log().body(true);
+
+        Map<String, ?> character1 = response2.jsonPath().getMap("[0]");
+        System.out.println(character1);
+
+        assertEquals(character,character1);
+
+    }
+    @Test
+    @DisplayName("Verify name search")
+    public void test7() {
+        given().accept(ContentType.JSON).
+                queryParams("key",ConfigurationReader.getProperty("apiKey")).
+                queryParams("name","Harry Potter").
+                when().get("/characters").
+        then().assertThat().statusCode(200).
+                assertThat().contentType("application/json; charset=utf-8").
+                assertThat().body(containsString("Harry Potter")).
+                log().body(true);
+        System.out.println("-----------------------------------------------------------------");
+        given().accept(ContentType.JSON).
+                queryParams("key",ConfigurationReader.getProperty("apiKey")).
+                queryParams("name","Marry Potter").
+                when().get("/characters").
+                then().assertThat().statusCode(200).
+                assertThat().contentType("application/json; charset=utf-8").
+                assertThat().body("",is(empty())).
+                log().body(true);
+
+
     }
 }
 
