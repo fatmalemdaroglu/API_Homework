@@ -135,6 +135,70 @@ public class HarryPotter {
 
 
     }
+
+    @Test
+    @DisplayName("Verify house members")
+    public void test8() {
+        Response response = given().accept(ContentType.JSON).
+                queryParams("key",ConfigurationReader.getProperty("apiKey")).
+                when().get("/houses");
+        response.then().assertThat().statusCode(200).
+                assertThat().contentType("application/json; charset=utf-8");
+        String idGryffindor = response.jsonPath().getString("_id[0]");
+        List<String> listOfIds = response.jsonPath().getList("members[0]");
+        System.out.println("-----------------------------------------------------------------");
+        Response response2 = given().accept(ContentType.JSON).
+                queryParams("key",ConfigurationReader.getProperty("apiKey")).
+                pathParams("id",idGryffindor).
+                when().get("/houses/{id}");
+        response2.then().assertThat().statusCode(200).
+                assertThat().contentType("application/json; charset=utf-8");
+        List<String> listofIds2 = response2.jsonPath().getList("[0].members._id");
+        System.out.println(listofIds2);
+        assertEquals(listOfIds,listofIds2);
+    }
+
+    @Test
+    @DisplayName("Verify house members")
+    public void test9() {
+        Response response = given().accept(ContentType.JSON).
+                queryParams("key",ConfigurationReader.getProperty("apiKey")).
+                pathParam("id", "5a05e2b252f721a3cf2ea33f").
+                when().get("/houses/{id}");
+        response.then().assertThat().statusCode(200).
+                assertThat().contentType("application/json; charset=utf-8").log().body(true);
+        List<String> listOfIds = response.jsonPath().getList("[0].members._id");
+
+        System.out.println("-----------------------------------------------------------------");
+        Response response2 = given().accept(ContentType.JSON).
+                queryParams("key",ConfigurationReader.getProperty("apiKey")).
+                queryParams("house","Gryffindor").
+                when().get("/characters");
+        response2.then().assertThat().statusCode(200).
+                assertThat().contentType("application/json; charset=utf-8").log().body(true);
+        List<String> listofIds2 = response2.jsonPath().getList("_id");
+        System.out.println(listOfIds.size()+" "+listofIds2.size());
+        assertEquals(listOfIds,listofIds2);
+    }
+
+    @Test
+    @DisplayName("Verify house with most members")
+    public void test10() {
+        Response response = given().accept(ContentType.JSON).
+                queryParams("key",ConfigurationReader.getProperty("apiKey")).
+                when().get("/houses");
+        response.then().assertThat().statusCode(200).
+                assertThat().contentType("application/json; charset=utf-8").log().body(true);
+        List<String> listOfGryf = response.jsonPath().getList("members[0]");
+        List<String> listOfRaven = response.jsonPath().getList("members[1]");
+        List<String> listOfSlyt = response.jsonPath().getList("members[2]");
+        List<String> listOfHuffl = response.jsonPath().getList("members[3]");
+        System.out.println(listOfGryf.size()+" "+listOfHuffl.size()+" "+listOfRaven.size()+" "+listOfSlyt.size());
+        assertTrue(listOfGryf.size()>listOfRaven.size() && listOfGryf.size()>listOfHuffl.size() && listOfGryf.size()>listOfSlyt.size());
+
+    }
+
+
 }
 
 
